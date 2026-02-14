@@ -19,7 +19,7 @@ Análise de **Sorte vs Habilidade (xGoals Analysis)** - comparar os gols esperad
 ## 📁 Estrutura do Projeto
 
 ```
-nhl-analytics/
+boston-bruins-analysis/
 ├── README.md
 ├── BOS.csv                      # Dados brutos do MoneyPuck
 └── boston_bruins_analysis.ods   # Análise no LibreOffice Calc
