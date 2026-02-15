@@ -6,15 +6,19 @@ Projeto de análise de dados esportivos de hóquei no gelo, focado na performanc
 
 Os dados foram obtidos gratuitamente no **MoneyPuck**:
 
-- **Site:** https://moneypuck.com/data.htm
-- **Arquivo:** `BOS.csv` (dados jogo a jogo do Boston Bruins)
-- **Período:** Temporadas de 2008-09 até 2024-25
+* **Site:** [https://moneypuck.com/data.htm](https://moneypuck.com/data.htm)
+* **Arquivo:** `BOS.csv` (dados jogo a jogo do Boston Bruins)
+* **Período:** Temporadas de 2008-09 até 2024-25
 
 O MoneyPuck disponibiliza dados de jogadores, times, goleiros e chutes (shots) desde 2008. Os dados são gratuitos para uso não comercial, com crédito ao MoneyPuck.com.
 
+---
+
 ## 🎯 Objetivo
 
-Análise de **Sorte vs Habilidade (xGoals Analysis)** - comparar os gols esperados (Expected Goals) com os gols reais para identificar se o time está tendo "sorte" ou "azar" nos resultados.
+Análise de **Processo vs Resultado (xGoals Analysis)** — comparar os gols esperados (Expected Goals) com os gols reais para identificar eficiência, dominância estatística e possível influência de sorte nos resultados.
+
+---
 
 ## 📁 Estrutura do Projeto
 
@@ -25,6 +29,8 @@ boston-bruins-analysis/
 └── boston_bruins_analysis.ods   # Análise no LibreOffice Calc
 ```
 
+---
+
 ## 📋 Estrutura da Planilha
 
 ### Aba: BOS
@@ -33,86 +39,169 @@ Dados brutos importados do CSV com 109 colunas de métricas.
 
 ### Aba: xGoals_Analysis
 
-Análise filtrada com as seguintes colunas:
+Tabela analítica por jogo com métricas derivadas.
 
-| Coluna        | Descrição                          |
-| ------------- | ---------------------------------- |
-| gameId        | ID único do jogo                   |
-| gameDate      | Data do jogo (YYYYMMDD)            |
-| opposingTeam  | Time adversário                    |
-| home_or_away  | HOME ou AWAY                       |
-| situation     | Situação do jogo (all, 5on5, etc.) |
-| xGoalsFor     | Gols esperados (ataque)            |
-| goalsFor      | Gols reais marcados                |
-| xGoalsAgainst | Gols esperados (defesa)            |
-| goalsAgainst  | Gols reais sofridos                |
-| season        | Temporada                          |
-| luckOffense   | goalsFor - xGoalsFor               |
-| luckDefense   | xGoalsAgainst - goalsAgainst       |
-| totalLuck     | luckOffense + luckDefense          |
+| Coluna               | Descrição                                        |
+| -------------------- | ------------------------------------------------ |
+| Game_ID              | ID único do jogo                                 |
+| Game_Date            | Data do jogo                                     |
+| Opposing_Team        | Time adversário                                  |
+| Home_or_Away         | HOME ou AWAY                                     |
+| Situation            | Situação do jogo (all, 5on5, etc.)               |
+| xG_For               | Gols esperados criados                           |
+| Goals_For            | Gols reais marcados                              |
+| xG_Against           | Gols esperados concedidos                        |
+| Goals_Against        | Gols reais sofridos                              |
+| Season               | Temporada                                        |
+| Luck_Offense         | Goals_For - xG_For                               |
+| Luck_Defense         | xG_Against - Goals_Against                       |
+| Net_xG               | xG_For - xG_Against                              |
+| Net_Goals            | Goals_For - Goals_Against                        |
+| xG_Share             | xG_For / (xG_For + xG_Against)                   |
+| Performance_Delta    | Net_Goals - Net_xG                               |
+| Shooting_Efficiency  | Goals_For / xG_For                               |
+| Defensive_Efficiency | Goals_Against / xG_Against                       |
+| PDO                  | Shooting_Efficiency + (1 - Defensive_Efficiency) |
+
+---
 
 ## 📈 Métricas de Análise
 
-### Expected Goals (xGoals)
+### Expected Goals (xG)
 
-Estimativa estatística de quantos gols um time "deveria" marcar/sofrer, baseado na qualidade das chances criadas. O modelo considera:
+Estimativa estatística de quantos gols um time "deveria" marcar ou sofrer com base na qualidade das chances criadas. O modelo considera:
 
-- Distância do gol
-- Ângulo do chute
-- Tipo de jogada
-- Situação do jogo (power play, etc.)
+* Distância do gol
+* Ângulo do chute
+* Tipo de jogada
+* Situação do jogo (power play, 5v5, etc.)
 
-### luckOffense (Sorte no Ataque)
+---
 
-```
-luckOffense = goalsFor - xGoalsFor
-```
-
-- **Positivo:** Marcou mais do que esperado (sorte/eficiência excepcional)
-- **Negativo:** Marcou menos do que esperado (azar/ineficiência)
-
-### luckDefense (Sorte na Defesa)
+### Luck_Offense
 
 ```
-luckDefense = xGoalsAgainst - goalsAgainst
+Luck_Offense = Goals_For - xG_For
 ```
 
-- **Positivo:** Sofreu menos do que esperado (sorte/goleiro excepcional)
-- **Negativo:** Sofreu mais do que esperado (azar/goleiro fraco)
+Diferença entre gols reais marcados e gols esperados.
 
-### totalLuck (Sorte Total)
+---
+
+### Luck_Defense
 
 ```
-totalLuck = luckOffense + luckDefense
+Luck_Defense = xG_Against - Goals_Against
 ```
 
-Visão geral da "sorte" do time no jogo.
+Diferença entre gols esperados concedidos e gols reais sofridos.
+
+---
+
+### Net_xG
+
+```
+Net_xG = xG_For - xG_Against
+```
+
+Mede dominância estatística baseada na qualidade das chances.
+
+---
+
+### Net_Goals
+
+```
+Net_Goals = Goals_For - Goals_Against
+```
+
+Resultado real do jogo.
+
+---
+
+### xG_Share
+
+```
+xG_Share = xG_For / (xG_For + xG_Against)
+```
+
+Percentual de controle do jogo baseado em chances criadas.
+
+---
+
+### Performance_Delta
+
+```
+Performance_Delta = Net_Goals - Net_xG
+```
+
+Diferença entre resultado real e desempenho esperado.
+
+---
+
+### Shooting_Efficiency
+
+```
+Shooting_Efficiency = Goals_For / xG_For
+```
+
+Eficiência ofensiva comparada ao esperado.
+
+---
+
+### Defensive_Efficiency
+
+```
+Defensive_Efficiency = Goals_Against / xG_Against
+```
+
+Eficiência defensiva comparada ao esperado.
+
+---
+
+### PDO
+
+```
+PDO = Shooting_Efficiency + (1 - Defensive_Efficiency)
+```
+
+Indicador agregado de eficiência ofensiva e defensiva.
+
+---
 
 ## 🔧 Ferramentas Utilizadas
 
-- **LibreOffice Calc** (versão 26.2.0.3)
-- **MoneyPuck** (fonte de dados)
+* LibreOffice Calc (versão 26.2.0.3)
+* MoneyPuck (fonte de dados)
+
+---
 
 ## ⚙️ Configuração de Importação
 
-Ao importar o CSV no LibreOffice Calc (Português Brasil), configure:
+Ao importar o CSV no LibreOffice Calc:
 
-- **Localidade:** English (USA)
-- **Separador de campo:** Vírgula
-- Isso garante que os decimais (ponto) sejam lidos corretamente.
+* Localidade: English (USA)
+* Separador de campo: Vírgula
+
+Isso garante que os decimais (.) sejam lidos corretamente.
+
+---
 
 ## 📅 Filtros Aplicados
 
 Para análise da temporada 2024-25:
 
-- **season:** 2024
-- **situation:** all (todas as situações do jogo)
-- **Total de jogos:** 82
+* season: 2024
+* situation: all
+* Total de jogos: 82
+
+---
 
 ## 📝 Créditos
 
-- Dados fornecidos por [MoneyPuck.com](https://moneypuck.com)
-- Projeto desenvolvido para fins de estudo e análise esportiva
+* Dados fornecidos por MoneyPuck.com
+* Projeto desenvolvido para fins de estudo e análise esportiva
+
+---
 
 ## 📜 Licença
 
